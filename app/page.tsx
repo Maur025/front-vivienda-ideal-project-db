@@ -295,8 +295,8 @@ export default function Dashboard() {
 					{/* Reports Tabs */}
 					<Contract />
 					<PendingPayment />
-					<MonthlyIncome />
-					<AgentCommission />
+					<MonthlyIncome reload={isReloadLists} />
+					<AgentCommission reload={isReloadLists} />
 					<PropertyVisit reload={isReloadLists} />
 
 					{/* Reports Tab - no use*/}
