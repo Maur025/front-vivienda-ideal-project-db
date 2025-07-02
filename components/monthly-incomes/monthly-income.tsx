@@ -1,4 +1,4 @@
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,18 +30,47 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-interface PendingPaymentData {
-	id: string;
+interface MonthlyIncome {
+	contractTypeId: string;
+	name?: string;
+	total?: string;
+	commissions?: string;
+	pays?: string;
 }
 
-const MonthlyIncome = (): JSX.Element => {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const MonthlyIncome = ({ reload }: { reload: boolean }): JSX.Element => {
 	const [newPayment, setNewPayment] = useState({
 		type: "",
 	});
 
-	const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentData[]>([]);
+	const [monthlyIncomeList, setMonthlyIncomeList] = useState<MonthlyIncome[]>([]);
+	const [filterRequest, setFilterRequest] = useState<{ date: Date }>({ date: new Date() });
 
 	const handleContract = (): void => {};
+
+	const onChangeDate = (event: any) => {
+		setFilterRequest((prev) => ({
+			...prev,
+			date: new Date(event.target?.value),
+		}));
+	};
+
+	useEffect(() => {
+		const getMontlyIncomeList = async () => {
+			const responseApi = await fetch(
+				`${apiUrl}/contract/contract-types?date=${filterRequest.date.toISOString()}`,
+			);
+
+			const data = await responseApi.json();
+			console.log(data);
+
+			setMonthlyIncomeList(data);
+		};
+
+		getMontlyIncomeList();
+	}, [reload, filterRequest.date]);
 
 	return (
 		<TabsContent value="ingresosMensuales" className="space-y-6">
@@ -105,37 +134,50 @@ const MonthlyIncome = (): JSX.Element => {
 						Lista de ingresos mensuales.
 					</CardDescription>
 				</CardHeader>
+				<div>
+					<div className="space-y-4 w-72 my-4 ms-8">
+						<div>
+							<Label htmlFor="item-priority" className="text-gray-300">
+								Mes:
+							</Label>
+							<input
+								type="date"
+								className="bg-gray-800 border-gray-700 text-gray-100 p-2 mx-4"
+								onChange={onChangeDate}
+							/>
+						</div>
+					</div>
+				</div>
 				<CardContent>
 					<Table>
 						<TableHeader>
 							<TableRow className="border-gray-800">
-								<TableHead className="text-gray-300">N° contrato</TableHead>
-								<TableHead className="text-gray-300">Tipo de contrato</TableHead>
-								<TableHead className="text-gray-300">Fechas inicio y fin</TableHead>
-								<TableHead className="text-gray-300">Arrendador/Vendedor</TableHead>
+								<TableHead className="text-gray-300">Nombre de Operacion</TableHead>
+								<TableHead className="text-gray-300">Total</TableHead>
+								<TableHead className="text-gray-300">Total Comisiones</TableHead>
 								<TableHead className="text-gray-300">
-									Arrendatario/comprador
+									Total Pagos Realizados{" "}
 								</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{pendingPaymentList.map((pendingPayment) => (
-								<TableRow key={pendingPayment.id} className="border-gray-800">
-									{/* <TableCell className="text-gray-100 font-medium">
-										{contract.title}
+							{monthlyIncomeList.map((monthlyIncome) => (
+								<TableRow
+									key={monthlyIncome.contractTypeId}
+									className="border-gray-800"
+								>
+									<TableCell className="text-gray-100 font-medium">
+										{monthlyIncome.name ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300 max-w-xs truncate">
-										{contract.description}
+										{monthlyIncome.total ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300">
-										{contract.category}
-									</TableCell>
-									<TableCell className={getPriorityColor(contract.priority)}>
-										{contract.priority}
+										{monthlyIncome.commissions ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300">
-										{contract.createdAt}
-									</TableCell> */}
+										{monthlyIncome.pays ?? "S/N"}
+									</TableCell>
 								</TableRow>
 							))}
 						</TableBody>

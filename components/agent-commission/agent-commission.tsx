@@ -51,7 +51,7 @@ const AgentCommission = ({ reload }: { reload: boolean }): JSX.Element => {
 
 	useEffect(() => {
 		const getAgentCommissionList = async () => {
-			const responseApi = await fetch(`${apiUrl}/property`);
+			const responseApi = await fetch(`${apiUrl}/agent`);
 
 			const data = await responseApi.json();
 			setAgentCommissionList(data);
@@ -140,16 +140,16 @@ const AgentCommission = ({ reload }: { reload: boolean }): JSX.Element => {
 							{agentCommissionList.map((agentCommission) => (
 								<TableRow key={agentCommission.id} className="border-gray-800">
 									<TableCell className="text-gray-100 font-medium">
-										{agentCommission.name}
+										{agentCommission.name ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300 max-w-xs truncate">
-										{agentCommission.percentage}
+										{agentCommission.percentage ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300">
-										{agentCommission.contractQuantity}
+										{agentCommission.contractQuantity ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300">
-										{agentCommission.totalAmount}
+										{agentCommission.totalAmount ?? "S/N"}
 									</TableCell>
 								</TableRow>
 							))}
