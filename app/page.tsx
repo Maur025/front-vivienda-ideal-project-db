@@ -33,6 +33,9 @@ import {
 } from "@/components/ui/select";
 import Contract from "@/components/contract-report/contract";
 import PendingPayment from "@/components/pending-payment/pending-payment";
+import PropertyVisit from "@/components/property-visit/property-visit";
+import MonthlyIncome from "@/components/monthly-incomes/monthly-income";
+import AgentCommission from "@/components/agent-commission/agent-commission";
 
 interface ReportItem {
 	id: string;
@@ -286,6 +289,9 @@ export default function Dashboard() {
 					{/* Reports Tabs */}
 					<Contract />
 					<PendingPayment />
+					<MonthlyIncome />
+					<AgentCommission />
+					<PropertyVisit />
 
 					{/* Reports Tab - no use*/}
 					<TabsContent value="reports" className="space-y-6">
