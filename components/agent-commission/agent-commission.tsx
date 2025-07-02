@@ -1,4 +1,4 @@
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,18 +30,35 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-interface PendingPaymentData {
+interface AgentCommission {
 	id: string;
+	name?: string;
+	percentage: string;
+	contractQuantity?: string;
+	totalAmount?: string;
 }
 
-const AgentCommission = (): JSX.Element => {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const AgentCommission = ({ reload }: { reload: boolean }): JSX.Element => {
 	const [newPayment, setNewPayment] = useState({
 		type: "",
 	});
 
-	const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentData[]>([]);
+	const [agentCommissionList, setAgentCommissionList] = useState<AgentCommission[]>([]);
 
 	const handleContract = (): void => {};
+
+	useEffect(() => {
+		const getAgentCommissionList = async () => {
+			const responseApi = await fetch(`${apiUrl}/property`);
+
+			const data = await responseApi.json();
+			setAgentCommissionList(data);
+		};
+
+		getAgentCommissionList();
+	}, [reload]);
 
 	return (
 		<TabsContent value="comisionesAgente" className="space-y-6">
@@ -109,33 +126,31 @@ const AgentCommission = (): JSX.Element => {
 					<Table>
 						<TableHeader>
 							<TableRow className="border-gray-800">
-								<TableHead className="text-gray-300">N° contrato</TableHead>
-								<TableHead className="text-gray-300">Tipo de contrato</TableHead>
-								<TableHead className="text-gray-300">Fechas inicio y fin</TableHead>
-								<TableHead className="text-gray-300">Arrendador/Vendedor</TableHead>
+								<TableHead className="text-gray-300">Agente</TableHead>
 								<TableHead className="text-gray-300">
-									Arrendatario/comprador
+									Cantidad de contratos
 								</TableHead>
+								<TableHead className="text-gray-300">
+									Promedio de comisiones %
+								</TableHead>
+								<TableHead className="text-gray-300">Total de comisiones</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{pendingPaymentList.map((pendingPayment) => (
-								<TableRow key={pendingPayment.id} className="border-gray-800">
-									{/* <TableCell className="text-gray-100 font-medium">
-										{contract.title}
+							{agentCommissionList.map((agentCommission) => (
+								<TableRow key={agentCommission.id} className="border-gray-800">
+									<TableCell className="text-gray-100 font-medium">
+										{agentCommission.name}
 									</TableCell>
 									<TableCell className="text-gray-300 max-w-xs truncate">
-										{contract.description}
+										{agentCommission.percentage}
 									</TableCell>
 									<TableCell className="text-gray-300">
-										{contract.category}
-									</TableCell>
-									<TableCell className={getPriorityColor(contract.priority)}>
-										{contract.priority}
+										{agentCommission.contractQuantity}
 									</TableCell>
 									<TableCell className="text-gray-300">
-										{contract.createdAt}
-									</TableCell> */}
+										{agentCommission.totalAmount}
+									</TableCell>
 								</TableRow>
 							))}
 						</TableBody>

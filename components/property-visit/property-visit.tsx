@@ -1,4 +1,4 @@
-import { JSX, useState } from "react";
+import { JSX, useEffect, useState } from "react";
 
 import { Plus } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -30,18 +30,34 @@ import {
 	SelectValue,
 } from "@/components/ui/select";
 
-interface PendingPaymentData {
+interface PropertyVisit {
 	id: string;
+	name?: string;
+	visitQuantity?: string;
+	clients?: string;
 }
 
-const PropertyVisit = (): JSX.Element => {
+const apiUrl = process.env.NEXT_PUBLIC_API_URL;
+
+const PropertyVisit = ({ reload }: { reload: boolean }): JSX.Element => {
 	const [newPayment, setNewPayment] = useState({
 		type: "",
 	});
 
-	const [pendingPaymentList, setPendingPaymentList] = useState<PendingPaymentData[]>([]);
+	const [propertyVisitList, setPropertyVisitList] = useState<PropertyVisit[]>([]);
 
 	const handleContract = (): void => {};
+
+	useEffect(() => {
+		const getPropertyVisitList = async () => {
+			const responseApi = await fetch(`${apiUrl}/property`);
+
+			const data = await responseApi.json();
+			setPropertyVisitList(data);
+		};
+
+		getPropertyVisitList();
+	}, [reload]);
 
 	return (
 		<TabsContent value="visitasInmuebles" className="space-y-6">
@@ -109,33 +125,23 @@ const PropertyVisit = (): JSX.Element => {
 					<Table>
 						<TableHeader>
 							<TableRow className="border-gray-800">
-								<TableHead className="text-gray-300">N° contrato</TableHead>
-								<TableHead className="text-gray-300">Tipo de contrato</TableHead>
-								<TableHead className="text-gray-300">Fechas inicio y fin</TableHead>
-								<TableHead className="text-gray-300">Arrendador/Vendedor</TableHead>
-								<TableHead className="text-gray-300">
-									Arrendatario/comprador
-								</TableHead>
+								<TableHead className="text-gray-300">Inmueble</TableHead>
+								<TableHead className="text-gray-300">Cantidad de visitas</TableHead>
+								<TableHead className="text-gray-300">Clientes</TableHead>
 							</TableRow>
 						</TableHeader>
 						<TableBody>
-							{pendingPaymentList.map((pendingPayment) => (
-								<TableRow key={pendingPayment.id} className="border-gray-800">
-									{/* <TableCell className="text-gray-100 font-medium">
-										{contract.title}
+							{propertyVisitList.map((propertyVisit) => (
+								<TableRow key={propertyVisit.id} className="border-gray-800">
+									<TableCell className="text-gray-100 font-medium">
+										{propertyVisit.name ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300 max-w-xs truncate">
-										{contract.description}
+										{propertyVisit.visitQuantity ?? "S/N"}
 									</TableCell>
 									<TableCell className="text-gray-300">
-										{contract.category}
+										{propertyVisit.clients ?? "S/N"}
 									</TableCell>
-									<TableCell className={getPriorityColor(contract.priority)}>
-										{contract.priority}
-									</TableCell>
-									<TableCell className="text-gray-300">
-										{contract.createdAt}
-									</TableCell> */}
 								</TableRow>
 							))}
 						</TableBody>

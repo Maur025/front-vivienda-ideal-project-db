@@ -106,6 +106,8 @@ export default function Dashboard() {
 		},
 	]);
 
+	const [isReloadLists, setIsReloadLists] = useState<boolean>(false);
+
 	const [newReport, setNewReport] = useState({ name: "", type: "", date: "" });
 	const [newListItem, setNewListItem] = useState({
 		title: "",
@@ -146,6 +148,10 @@ export default function Dashboard() {
 			setListItems([...listItems, item]);
 			setNewListItem({ title: "", description: "", category: "", priority: "" });
 		}
+	};
+
+	const reloadLists = (): void => {
+		setIsReloadLists((prev) => !prev);
 	};
 
 	const getPriorityColor = (priority: string) => {
@@ -260,27 +266,27 @@ export default function Dashboard() {
 				{/* Main Content */}
 				<Tabs defaultValue="contratos" className="space-y-6">
 					<TabsList className="bg-gray-900 border-gray-800">
-						<TabsTrigger value="contratos">
+						<TabsTrigger value="contratos" onClick={() => reloadLists()}>
 							<FileText className="h-4 w-4 mr-2" />
 							Contratos Activos y Vencidos
 						</TabsTrigger>
 
-						<TabsTrigger value="pagosPendientes">
+						<TabsTrigger value="pagosPendientes" onClick={() => reloadLists()}>
 							<FileText className="h-4 w-4 mr-2" />
 							Pagos pendientes por cliente o inmueble.
 						</TabsTrigger>
 
-						<TabsTrigger value="ingresosMensuales">
+						<TabsTrigger value="ingresosMensuales" onClick={() => reloadLists()}>
 							<FileText className="h-4 w-4 mr-2" />
 							Ingresos mensuales
 						</TabsTrigger>
 
-						<TabsTrigger value="comisionesAgente">
+						<TabsTrigger value="comisionesAgente" onClick={() => reloadLists()}>
 							<FileText className="h-4 w-4 mr-2" />
 							Comisiones por Agente
 						</TabsTrigger>
 
-						<TabsTrigger value="visitasInmuebles">
+						<TabsTrigger value="visitasInmuebles" onClick={() => reloadLists()}>
 							<FileText className="h-4 w-4 mr-2" />
 							Visitas a inmuebles
 						</TabsTrigger>
@@ -291,7 +297,7 @@ export default function Dashboard() {
 					<PendingPayment />
 					<MonthlyIncome />
 					<AgentCommission />
-					<PropertyVisit />
+					<PropertyVisit reload={isReloadLists} />
 
 					{/* Reports Tab - no use*/}
 					<TabsContent value="reports" className="space-y-6">
